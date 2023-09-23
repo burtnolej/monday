@@ -1,0 +1,5 @@
+you cannot get updated_first from the API
+instead get everything using monday5 and filter all items and subitems by updated time
+then run every 5 mins this script so it just downloads updates or noews
+this will give the quick look view
+from the sheet you can select quick view - anything thats new or changes
