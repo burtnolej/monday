@@ -9,15 +9,27 @@ else
       echo "seting delay to "$1
 fi
 
-cd /home/burtnolej/sambashare/veloxmon/monday
+cd /home/ubuntu/sambashare/veloxmon/monday
 . ~/.bashrc
+. ~/.bashrc.jb
+
 TODAY=`date +%Y%m%d`
 NOW=`date +%Y%m%d_%H%M`
 
 csvoutputpath=./csv
 jsonoutputpath=./json
-timewindow=20
-finalpath=/var/www/html/datafiles/Monday/$timewindow
+timewindow=100
+
+hn=`hostname`
+if [ $hn == "ip-172-31-77-229" ]; then
+        export DIRWEB=/var/www/veloxfintech.com/html
+else
+        export DIRWEB=/var/www/html
+fi
+
+export DIRDATAFILES=$DIRWEB/datafiles
+
+finalpath=$DIRDATAFILES/Monday/$timewindow
 
 boardids=("4977328922" "1140656959" "2193345626" "2259144314" "2763786972" "4973959122" "4974012540" "4909340518" "4973204278")
 
@@ -29,6 +41,8 @@ for boardid in ${boardids[@]}; do
   sleep $delay # to allow monday api complexity quota cool down
   #cat /dev/null > $csvoutputpath/$boardid.txt
 
+  echo ./monday5.py "board_id:"$boardid"^timewindow:"$timewindow
+
   python ./monday5.py "board_id:"$boardid"^timewindow:"$timewindow > $csvoutputpath/$timewindow/$boardid.txt 2>&1
 
   #num_rows=$(wc -l $csvoutputpath"/5555786972.txt")
@@ -38,7 +52,7 @@ done
 cat $csvoutputpath/$timewindow/*.txt > $csvoutputpath/$timewindow/6666786972.txt
 
 echo $dt" updates ["$timewindow"] sleeping for "$delay
-python monday_notifications.py timewindow:20 > $csvoutputpath/$timewindow/updates.txt
+python monday_notifications.py timewindow:300 > $csvoutputpath/$timewindow/updates.txt
 
 cp $csvoutputpath/$timewindow/* $finalpath
 rm $csvoutputpath/$timewindow/* 
